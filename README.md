@@ -1,3 +1,5 @@
-# server-setup-08-2021
+# Server setup 08 2021
 
-The leven.dev server install from august 2021 and before
+This is the old configuration of the [leven.dev](https://leven.dev) infrastructure. These are outdated and might break at some time.
+
+Please respect the Authors license.
