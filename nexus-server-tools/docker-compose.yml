@@ -1,0 +1,39 @@
+version: "3"
+
+networks:
+    web:
+
+volumes:
+    caddy_data:
+        name: caddy_data
+        external: true
+    caddy_config:
+        name: caddy_config
+        external: true
+    nexus_data:
+        name: nexus_data
+        external: true
+
+services:
+    caddy:
+        container_name: caddy
+        # image: caddy:2-alpine
+        build: caddy/
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - caddy_data:/data
+            - caddy_config:/config
+        networks:
+            - web # for caddy to dervice communication
+    
+    nexus:
+        container_name: nexus
+        image: registry.connect.redhat.com/sonatype/nexus-repository-manager:latest
+        restart: unless-stopped
+        volumes:
+            - nexus_data:/nexus-data
+        networks:
+            - web # for caddy to dervice communication

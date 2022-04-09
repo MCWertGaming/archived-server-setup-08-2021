@@ -1,0 +1,6 @@
+1. use docker-compose container
+
+2. add install script
+
+3. use watchtower for updating
+

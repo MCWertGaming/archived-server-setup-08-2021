@@ -1,0 +1,43 @@
+---
+kind: pipeline
+type: docker
+name: build and push image
+
+platform:
+  os: linux
+  arch: amd64
+
+clone:
+  disable: true
+
+steps:
+- name: clone
+  pull: always
+  image: docker-private.nexus.local.leven.dev/infrastructure/git-clone-plugin:latest
+  environment:
+    REPOSITORY: https://gitea.leven.dev/mcwertgaming/docker-publish-plugin.git
+
+- name: build
+  pull: always
+  image: docker-private.nexus.local.leven.dev/infrastructure/docker-publish-plugin:latest
+  environment:
+    PASSWORD:
+      from_secret: nexus_pass
+    REPOSITORY: docker-push.nexus.local.leven.dev/infrastructure/docker-publish-plugin:latest
+    USERNAME:
+      from_secret: nexus_user
+  privileged: true
+  volumes:
+  - name: docker_socket
+    path: /var/run/docker.sock
+
+volumes:
+- name: docker_socket
+  host:
+    path: /var/run/docker.sock
+
+---
+kind: signature
+hmac: 7277298ffbdf0e99dd343ade7b090b8b15b075e0b48adc2110d4ef9394fd91d5
+
+...

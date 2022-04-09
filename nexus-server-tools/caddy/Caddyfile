@@ -1,0 +1,17 @@
+{
+        email caddy@leven.dev
+        acme_ca https://ca.leven.dev/acme/acme/directory
+        ocsp_stapling off
+}
+nexus.local.leven.dev {
+        reverse_proxy nexus:8081
+}
+docker.nexus.local.leven.dev {
+        reverse_proxy nexus:8082
+}
+docker-push.nexus.local.leven.dev {
+        reverse_proxy nexus:8083
+}
+docker-private.nexus.local.leven.dev {
+        reverse_proxy nexus:8084
+}

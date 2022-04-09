@@ -1,0 +1,18 @@
+[Unit]
+Description=docker-compose service
+Requires=docker.service
+After=docker.service
+
+[Service]
+WorkingDirectory=/opt/compose
+ExecStartPre=-/usr/bin/docker-compose down
+ExecStartPre=-/usr/bin/docker-compose rm
+ExecStartPre=-/usr/bin/docker-compose pull
+ExecStartPre=-/usr/bin/docker pull caddy:builder
+ExecStartPre=-/usr/bin/docker pull caddy:latest
+ExecStartPre=-/usr/bin/docker pull drone/drone:latest
+ExecStart=/usr/bin/docker-compose up --build --remove-orphans
+ExecStop=/usr/local/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target

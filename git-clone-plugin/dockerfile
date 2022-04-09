@@ -1,0 +1,11 @@
+FROM docker-private.nexus.local.leven.dev/infrastructure/cert:latest as cert
+
+FROM docker-private.nexus.local.leven.dev/ubi8-minimal
+
+COPY --from=cert /root_ca.crt /usr/share/pki/ca-trust-source/anchors/root_ca.crt
+RUN microdnf install git bash \
+    && update-ca-trust
+
+COPY clone.sh /clone.sh
+
+ENTRYPOINT [ "/clone.sh" ]

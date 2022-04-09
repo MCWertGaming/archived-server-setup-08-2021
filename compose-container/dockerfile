@@ -1,0 +1,28 @@
+FROM docker.nexus.local.leven.dev/infrastructure/cert:latest as cert
+
+FROM docker-private.nexus.local.leven.dev/centos:7 as downloader
+
+RUN yum install -y wget \
+    && curl -s https://api.github.com/repos/docker/compose/releases/latest \
+    | grep browser_download_url \
+    | grep docker-compose-Linux-x86_64 \ 
+    | head -n 1 \
+    | cut -d : -f 2,3 \
+    | tr -d \" \
+    | wget -qi -
+
+FROM docker-private.nexus.local.leven.dev/centos:7
+
+COPY --from=downloader /docker-compose-Linux-x86_64 /usr/local/bin/docker-compose
+COPY --from=cert /root_ca.crt /etc/pki/ca-trust/source/anchors/root_ca.crt
+
+RUN yum update -y \
+    && yum install -y yum-utils \
+    && yum-config-manager \
+        --add-repo \
+        https://download.docker.com/linux/centos/docker-ce.repo \
+    && yum install -y docker-ce-cli \
+    && chmod +x /usr/local/bin/docker-compose \
+    && update-ca-trust
+
+ENTRYPOINT [ "/usr/local/bin/docker-compose" ]

@@ -1,0 +1,61 @@
+{
+        email caddy@leven.dev
+        acme_ca https://ca.leven.dev/acme/acme/directory
+        ocsp_stapling off
+}
+gitea.leven.dev {
+        encode zstd gzip
+        reverse_proxy https://gitea.local.leven.dev {
+                header_up Host {http.reverse_proxy.upstream.hostport}
+                header_up X-Forwarded-Host {host}
+        }
+}
+drone.leven.dev {
+        encode zstd gzip
+        reverse_proxy https://drone.local.leven.dev {
+                header_up Host {http.reverse_proxy.upstream.hostport}
+                header_up X-Forwarded-Host {host}
+        }
+}
+nexus.leven.dev {
+        encode zstd gzip
+        reverse_proxy https://nexus.local.leven.dev {
+                header_up Host {http.reverse_proxy.upstream.hostport}
+                header_up X-Forwarded-Host {host}
+        }
+}
+docker.nexus.leven.dev {
+        encode zstd gzip
+        reverse_proxy https://docker.nexus.local.leven.dev {
+                header_up Host {http.reverse_proxy.upstream.hostport}
+                header_up X-Forwarded-Host {host}
+        }
+}
+docker-private.nexus.leven.dev {
+        encode zstd gzip
+        reverse_proxy https://docker-private.nexus.local.leven.dev {
+                header_up Host {http.reverse_proxy.upstream.hostport}
+                header_up X-Forwarded-Host {host}
+        }
+}
+docker-windows.nexus.leven.dev {
+        encode zstd gzip
+        reverse_proxy https://docker-windows.nexus.local.leven.dev {
+                header_up Host {http.reverse_proxy.upstream.hostport}
+                header_up X-Forwarded-Host {host}
+        }
+}
+choco.nexus.leven.dev {
+        encode zstd gzip
+        reverse_proxy https://choco.nexus.local.leven.dev {
+                header_up Host {http.reverse_proxy.upstream.hostport}
+                header_up X-Forwarded-Host {host}
+        }
+}
+posh.nexus.leven.dev {
+        encode zstd gzip
+        reverse_proxy https://posh.nexus.local.leven.dev {
+                header_up Host {http.reverse_proxy.upstream.hostport}
+                header_up X-Forwarded-Host {host}
+        }
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=Update on every monday at 2 am
+
+[Timer]
+Unit=update.service
+OnCalendar=Mon *-*-* 2:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

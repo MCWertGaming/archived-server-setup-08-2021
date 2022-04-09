@@ -1,0 +1,93 @@
+version: "3"
+
+networks:
+    web:
+    gitea:
+
+volumes:
+    caddy_data:
+        name: caddy_data
+        external: true
+    caddy_config:
+        name: caddy_config
+        external: true
+    gitea_data:
+        name: gitea_data
+        external: true
+    drone_data:
+        name: drone_data
+        external: true
+    postgresql_data:
+        name: postgresql_data
+        external: true
+
+services:
+    caddy:
+        container_name: caddy
+        # image: caddy:2-alpine
+        build: caddy/
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - caddy_data:/data
+            - caddy_config:/config
+        networks:
+            - web # for caddy to service communication
+            
+    gitea:
+        container_name: gitea
+        # image: gitea/gitea:latest
+        build: gitea/
+        restart: unless-stopped
+        ports:
+          - 2000:2000
+        volumes:
+          - gitea_data:/data
+        environment:
+          - SSH_PORT=2000
+          - SSH_LISTEN_PORT=2000
+          - GITEA__database__DB_TYPE=postgres
+          - GITEA__database__HOST=postgresql:5432
+          - GITEA__database__NAME=gitea
+          - GITEA__database__USER=gitea
+          - GITEA__database__PASSWD=${POSTGRESQL_PASS}
+        networks:
+          - web   # for caddy to service communication
+          - gitea # for gitea and postreql communication
+        depends_on:
+          - postgresql
+
+    postgresql:
+        container_name: postgresql
+        image: registry.redhat.io/rhel8/postgresql-13:latest
+        restart: always
+        environment:
+          - POSTGRESQL_USER=gitea
+          - POSTGRESQL_PASSWORD=${POSTGRESQL_PASS}
+          - POSTGRESQL_DATABASE=gitea
+        networks:
+          - gitea # for gitea and postreql communication
+        volumes:
+          - postgresql_data:/var/lib/pgsql/data
+
+    drone:
+        container_name: drone
+        # image: drone/drone:latest
+        build: drone/
+        restart: unless-stopped
+        volumes:
+            - drone_data:/data
+        environment:
+            - DRONE_GITEA_CLIENT_ID=${GITEA_CLIENT_ID}
+            - DRONE_GITEA_CLIENT_SECRET=${GITEA_CLIENT_SECRET}
+            - DRONE_GITEA_SERVER=https://gitea.leven.dev
+            - DRONE_GIT_ALWAYS_AUTH=true
+            - DRONE_RPC_SECRET=${DRONE_SECRET}
+            - DRONE_DATADOG_ENABLED=false
+            - DRONE_SERVER_PROTO=https
+            - DRONE_SERVER_HOST=drone.leven.dev
+            - DRONE_USER_CREATE=username:adminuser,admin:true
+        networks:
+            - web

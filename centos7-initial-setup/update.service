@@ -1,0 +1,11 @@
+[Unit]
+Description=Updates the system and reboots
+Wants=update.timer
+
+[Service]
+Type=oneshot
+ExecStart=/bin/yum update -y
+ExecStop=/sbin/shutdown -r
+
+[Install]
+WantedBy=multi-user.target

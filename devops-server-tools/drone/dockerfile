@@ -1,0 +1,14 @@
+FROM drone/drone:latest AS builder
+
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && apk add step-cli \
+    && step ca root /root_ca.crt \
+            --ca-url https://ca.leven.dev \
+            --fingerprint 6a07a476ad9c24144df7978ed3468221e15b177155ec588e768fcc36303876d6
+
+FROM drone/drone:latest
+
+COPY --from=builder /root_ca.crt /usr/local/share/ca-certificates/root_ca.crt
+
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/* \
+    && update-ca-certificates

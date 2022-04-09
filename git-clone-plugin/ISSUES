@@ -1,0 +1,13 @@
+# Issues
+
+1. add color
+
+2. add testing of cloning
+
+3. add features from official clone plugin
+from https://github.com/drone/drone-git
+clone private repositories
+clone forks
+remove git repo option
+switch to other branches
+initialize git sub modules

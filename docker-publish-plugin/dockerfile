@@ -1,0 +1,17 @@
+FROM linux-docker.nexus.lcl.leven.dev/infra/cert:latest as cert
+
+FROM linux-docker.nexus.lcl.leven.dev/alpine:latest
+
+COPY --from=cert /root_ca.crt /etc/pki/ca-trust/source/anchors/root_ca.crt
+RUN yum update -y \
+    && yum install -y yum-utils \
+    && yum-config-manager \
+        --add-repo \
+        https://download.docker.com/linux/centos/docker-ce.repo \
+    && yum install -y docker-ce-cli \
+    && yum clean all \
+    && update-ca-trust
+
+COPY build.sh /build.sh
+
+ENTRYPOINT [ "/build.sh" ]

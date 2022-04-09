@@ -1,0 +1,11 @@
+{
+        email caddy@leven.dev
+        acme_ca https://ca.leven.dev/acme/acme/directory
+        ocsp_stapling off
+}
+gitea.local.leven.dev {
+        reverse_proxy gitea:3000
+}
+drone.local.leven.dev {
+        reverse_proxy drone:80
+}
